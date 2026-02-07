@@ -1,17 +1,36 @@
-/* ========== Lunapapa Nested Menu (Edition-compatible) ========== */
+/* ===== Lunapapa Nested Menu (Edition) ===== */
 
-/* 0) CRITICAL: hide "child" items in the TOP LEVEL nav so Edition "..." doesn't count them */
-nav.gh-head-menu > ul.nav > li[class*="-child"] {
+/* Hide ONLY real child items at top level (NOT parents like "-has-child") */
+nav.gh-head-menu > ul.nav > li[class*="-child"]:not([class*="-has-child"]) {
   display: none !important;
 }
 
-/* When moved into our submenu, show them again */
-nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
+/* When moved into submenu, show those real child items */
+nav.gh-head-menu ul.nested-menu > li[class*="-child"]:not([class*="-has-child"]) {
   display: list-item !important;
 }
 
-/* Parent positioning */
-.nested-menu-container li.menu-item-has-child {
+
+/* --- FIX 2: hide Edition overflow button (common selectors) --- */
+.gh-head-menu .nav-more,
+.gh-head-menu .nav-more-btn,
+.gh-head-menu-more,
+.gh-more,
+button[aria-label="More"],
+button[aria-label="More navigation items"],
+button[aria-label="Open more menu"]{
+  display: none !important;
+}
+
+/* --- FIX 3: make sure dropdown can overflow header area --- */
+.gh-head,
+.gh-head-inner,
+.gh-head-menu{
+  overflow: visible !important;
+}
+
+  
+.nested-menu-container .menu-item-has-child {
   position: relative;
 }
 
@@ -27,7 +46,10 @@ nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
   line-height: 1;
   opacity: .8;
 }
-.nested-menu-container .nested-menu-toggle:hover { opacity: 1; }
+
+.nested-menu-container .nested-menu-toggle:hover {
+  opacity: 1;
+}
 
 .nested-menu-container ul.nested-menu {
   list-style: none;
@@ -37,6 +59,7 @@ nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
 
 /* ===== Desktop dropdown ===== */
 @media (min-width: 901px) {
+
   .nested-menu-container li.menu-item-has-child > ul.nested-menu {
     position: absolute;
     top: calc(100% + 10px);
@@ -61,11 +84,10 @@ nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
     transform: translateY(-6px);
     transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
 
-    /* align slightly with first letter */
     margin-left: -10px;
   }
 
-  /* Hover bridge to prevent disappearing when moving mouse */
+  /* Hover bridge */
   .nested-menu-container li.menu-item-has-child > ul.nested-menu::before {
     content: "";
     position: absolute;
@@ -75,7 +97,7 @@ nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
     height: 12px;
   }
 
-  /* Open states */
+  /* Open on hover/focus or click-toggle */
   .nested-menu-container li.menu-item-has-child:hover > ul.nested-menu,
   .nested-menu-container li.menu-item-has-child:focus-within > ul.nested-menu,
   .nested-menu-container li.menu-item-has-child.is-nested-open > ul.nested-menu {
@@ -90,13 +112,16 @@ nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
     padding: 8px 10px;
     border-radius: 10px;
     text-decoration: none;
+
     color: rgba(255,255,255,.92);
     font-size: 14px;
     line-height: 1.2;
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
   .nested-menu-container ul.nested-menu a:hover {
     background: rgba(255,255,255,.10);
   }
@@ -104,6 +129,7 @@ nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
 
 /* ===== Mobile accordion ===== */
 @media (max-width: 900px) {
+
   .nested-menu-container li.menu-item-has-child > ul.nested-menu {
     position: static;
     width: 100%;
@@ -116,7 +142,7 @@ nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
     background: rgba(255,255,255,.06);
     border: 1px solid rgba(255,255,255,.10);
 
-    display: none; /* closed by default */
+    display: none;
   }
 
   .nested-menu-container li.menu-item-has-child.is-nested-open > ul.nested-menu {
@@ -130,7 +156,11 @@ nav.gh-head-menu ul.nested-menu > li[class*="-child"] {
     text-decoration: none;
     color: currentColor;
   }
+
   .nested-menu-container ul.nested-menu a:active {
     background: rgba(255,255,255,.10);
+  }
+  .nested-menu-container .nested-menu-toggle{ 
+    padding: 10px; 
   }
 }
