@@ -1,12 +1,7 @@
 (() => {
-  // Accept: "[has-child]" OR "has-child" (same for child)
-  const PARENT_RE = /\s*\[?\s*has-child\s*\]?\s*/ig;
-  const CHILD_RE  = /\s*\[?\s*child\s*\]?\s*/ig;
-  const MOBILE_BP = 900;
-
-  function isMobile() {
-    return window.matchMedia(`(max-width:${MOBILE_BP}px)`).matches;
-  }
+  // IMPORTANT: no "g" flag here (avoids lastIndex state bugs)
+  const PARENT_RE = /\s*\[?\s*has-child\s*\]?\s*/i;
+  const CHILD_RE  = /\s*\[?\s*child\s*\]?\s*/i;
 
   function getAnchorText(li) {
     const a = li.querySelector(":scope > a");
@@ -16,7 +11,11 @@
   function cleanAnchorText(li) {
     const a = li.querySelector(":scope > a");
     if (!a) return;
-    a.textContent = a.textContent.replace(PARENT_RE, " ").replace(CHILD_RE, " ").replace(/\s+/g, " ").trim();
+    a.textContent = a.textContent
+      .replace(/\s*\[?\s*has-child\s*\]?\s*/ig, " ")
+      .replace(/\s*\[?\s*child\s*\]?\s*/ig, " ")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function isParent(li) {
@@ -35,18 +34,16 @@
 
     navEl.classList.add("nested-menu-container");
 
-    // Store original HTML once
+    // Store original once
     if (!navEl.dataset.nestedMenuOriginal) {
       navEl.dataset.nestedMenuOriginal = navEl.innerHTML;
     }
 
-    // Avoid double init
     if (navEl.dataset.nestedMenuBuilt === "1") return;
 
     const topLis = Array.from(ul.querySelectorAll(":scope > li"));
 
-    // 1) Create submenu UL for each parent
-    let activeSubmenu = null;
+    // 1) Create submenu for each parent
     topLis.forEach((li) => {
       if (!isParent(li)) return;
 
@@ -59,18 +56,10 @@
         a.setAttribute("aria-expanded", "false");
       }
 
-      // submenu
       const submenu = document.createElement("ul");
       submenu.className = "nested-menu";
-
-      const submenuId = `nested-menu-${Math.random().toString(16).slice(2)}`;
-      submenu.id = submenuId;
-      if (a) a.setAttribute("aria-controls", submenuId);
-
       li.appendChild(submenu);
-      activeSubmenu = submenu;
 
-      // toggle button (separate from link)
       const toggle = document.createElement("button");
       toggle.type = "button";
       toggle.className = "nested-menu-toggle";
@@ -80,7 +69,7 @@
       if (a) a.insertAdjacentElement("afterend", toggle);
     });
 
-    // 2) Move child items under the most recent parent submenu
+    // 2) Move child items under the most recent parent
     const refreshedLis = Array.from(ul.querySelectorAll(":scope > li"));
     let currentSubmenu = null;
 
@@ -89,9 +78,7 @@
         currentSubmenu = li.querySelector(":scope > ul.nested-menu");
         return;
       }
-
       if (currentSubmenu && isChild(li)) {
-        li.classList.add("nested-menu-item");
         cleanAnchorText(li);
         currentSubmenu.appendChild(li);
       }
@@ -101,10 +88,8 @@
       ul.querySelectorAll(":scope > li.menu-item-has-child.is-nested-open").forEach((li) => {
         if (exceptLi && li === exceptLi) return;
         li.classList.remove("is-nested-open");
-        const a = li.querySelector(":scope > a");
-        const t = li.querySelector(":scope > .nested-menu-toggle");
-        if (a) a.setAttribute("aria-expanded", "false");
-        if (t) t.setAttribute("aria-expanded", "false");
+        li.querySelector(":scope > a")?.setAttribute("aria-expanded", "false");
+        li.querySelector(":scope > .nested-menu-toggle")?.setAttribute("aria-expanded", "false");
       });
     }
 
@@ -112,14 +97,10 @@
       const willOpen = !li.classList.contains("is-nested-open");
       if (willOpen) closeAll(li);
       li.classList.toggle("is-nested-open", willOpen);
-
-      const a = li.querySelector(":scope > a");
-      const t = li.querySelector(":scope > .nested-menu-toggle");
-      if (a) a.setAttribute("aria-expanded", willOpen ? "true" : "false");
-      if (t) t.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      li.querySelector(":scope > a")?.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      li.querySelector(":scope > .nested-menu-toggle")?.setAttribute("aria-expanded", willOpen ? "true" : "false");
     }
 
-    // Toggle button click
     ul.querySelectorAll(".nested-menu-toggle").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -130,24 +111,22 @@
       });
     });
 
-    // Desktop: hover/focus works via CSS; click outside closes
     document.addEventListener("click", (e) => {
       if (!navEl.contains(e.target)) closeAll();
     });
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeAll();
-    });
-
     navEl.dataset.nestedMenuBuilt = "1";
     navEl.classList.add("nested-menu-loaded");
+
+    // KEY: tell Edition to recalc overflow after nesting
+    window.dispatchEvent(new Event("resize"));
   }
 
   function init() {
     const nav = document.querySelector("nav.gh-head-menu") || document.querySelector("nav");
     if (!nav) return;
 
-    // Rebuild from original each init (Edition header can re-layout)
+    // Rebuild from original each time (Edition may re-render header)
     if (nav.dataset.nestedMenuOriginal) {
       nav.dataset.nestedMenuBuilt = "0";
       nav.innerHTML = nav.dataset.nestedMenuOriginal;
@@ -156,8 +135,10 @@
     buildNestedMenu(nav);
   }
 
-  window.addEventListener("load", init);
+  // Run early (before Edition "..." overflow settles)
+  document.addEventListener("DOMContentLoaded", init);
 
+  // Re-init on resize with debounce
   let t = null;
   window.addEventListener("resize", () => {
     clearTimeout(t);
