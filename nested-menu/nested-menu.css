@@ -1,0 +1,136 @@
+/* ===== Lunapapa Nested Menu (Edition) ===== */
+
+.nested-menu-container .menu-item-has-child {
+  position: relative;
+}
+
+/* Toggle button (chevron) */
+.nested-menu-container .nested-menu-toggle {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 6px;
+  margin-left: 4px;
+  cursor: pointer;
+  color: currentColor;
+  line-height: 1;
+  opacity: .8;
+}
+
+.nested-menu-container .nested-menu-toggle:hover {
+  opacity: 1;
+}
+
+.nested-menu-container ul.nested-menu {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+}
+
+/* ===== Desktop dropdown ===== */
+@media (min-width: 901px) {
+
+  .nested-menu-container li.menu-item-has-child > ul.nested-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+
+    min-width: 200px;
+    max-width: 320px;
+    width: max-content;
+
+    background: rgba(20, 20, 22, .55);
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.28);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
+
+    margin-left: -10px;
+  }
+
+  /* Hover bridge */
+  .nested-menu-container li.menu-item-has-child > ul.nested-menu::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -12px;
+    height: 12px;
+  }
+
+  /* Open on hover/focus or click-toggle */
+  .nested-menu-container li.menu-item-has-child:hover > ul.nested-menu,
+  .nested-menu-container li.menu-item-has-child:focus-within > ul.nested-menu,
+  .nested-menu-container li.menu-item-has-child.is-nested-open > ul.nested-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .nested-menu-container ul.nested-menu a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 10px;
+    text-decoration: none;
+
+    color: rgba(255,255,255,.92);
+    font-size: 14px;
+    line-height: 1.2;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nested-menu-container ul.nested-menu a:hover {
+    background: rgba(255,255,255,.10);
+  }
+}
+
+/* ===== Mobile accordion ===== */
+@media (max-width: 900px) {
+
+  .nested-menu-container li.menu-item-has-child > ul.nested-menu {
+    position: static;
+    width: 100%;
+    max-width: none;
+
+    padding: 6px;
+    margin-top: 6px;
+
+    border-radius: 12px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+
+    display: none;
+  }
+
+  .nested-menu-container li.menu-item-has-child.is-nested-open > ul.nested-menu {
+    display: block;
+  }
+
+  .nested-menu-container ul.nested-menu a {
+    display: block;
+    padding: 10px 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: currentColor;
+  }
+
+  .nested-menu-container ul.nested-menu a:active {
+    background: rgba(255,255,255,.10);
+  }
+  .nested-menu-container .nested-menu-toggle{ 
+    padding: 10px; 
+  }
+}
