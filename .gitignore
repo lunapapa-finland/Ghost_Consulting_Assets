@@ -1,0 +1,15 @@
+.DS_Store
+
+# Local Ghost runtime/workspace
+Ghost_local/
+
+# Node/build artifacts
+node_modules/
+ConsultingTemplate/node_modules/
+ConsultingTemplate/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

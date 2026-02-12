@@ -1,0 +1,172 @@
+.is-head-left-logo .gh-head-inner {
+    grid-template-columns: 1fr 50% 1fr;
+}
+
+.gh-head-logo {
+    font-size: 2.2rem;
+    font-weight: 800;
+}
+
+.gh-head-menu,
+.gh-head-actions {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+@media (min-width: 992px) {
+    .is-head-left-logo .gh-head-menu {
+        justify-content: center;
+        margin: 0;
+    }
+}
+
+/* ===== Nested banner navigation (Lunapapa) ===== */
+.gh-content p {
+    text-align: justify;
+}
+
+/* Hide child markers at top level; show inside submenu */
+nav.gh-head-menu > ul.nav > li[class*="-child"]:not([class*="-has-child"]) {
+    display: none !important;
+}
+
+nav.gh-head-menu ul.nested-menu > li[class*="-child"]:not([class*="-has-child"]) {
+    display: list-item !important;
+}
+
+/* Disable Ghost/Edition overflow collapsing */
+.gh-head-menu .nav-more,
+.gh-head-menu .nav-more-btn,
+.gh-head-menu-more,
+.gh-more,
+button[aria-label="More"],
+button[aria-label="More navigation items"],
+button[aria-label="Open more menu"] {
+    display: none !important;
+}
+
+/* Let dropdown overflow header bounds */
+.gh-head,
+.gh-head-inner,
+.gh-head-menu {
+    overflow: visible !important;
+}
+
+.nested-menu-container .menu-item-has-child {
+    position: relative;
+}
+
+.nested-menu-container .nested-menu-toggle {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 6px;
+    margin-left: 4px;
+    cursor: pointer;
+    color: currentColor;
+    line-height: 1;
+    opacity: .8;
+}
+
+.nested-menu-container .nested-menu-toggle:hover {
+    opacity: 1;
+}
+
+.nested-menu-container ul.nested-menu {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+}
+
+@media (min-width: 901px) {
+    .nested-menu-container li.menu-item-has-child > ul.nested-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        min-width: 200px;
+        max-width: 320px;
+        width: max-content;
+        background: rgba(20, 20, 22, .55);
+        border: 1px solid rgba(255, 255, 255, .14);
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, .28);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-6px);
+        transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
+        margin-left: -10px;
+    }
+
+    .nested-menu-container li.menu-item-has-child > ul.nested-menu::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -12px;
+        height: 12px;
+    }
+
+    .nested-menu-container li.menu-item-has-child:hover > ul.nested-menu,
+    .nested-menu-container li.menu-item-has-child:focus-within > ul.nested-menu,
+    .nested-menu-container li.menu-item-has-child.is-nested-open > ul.nested-menu {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    .nested-menu-container ul.nested-menu a {
+        display: block;
+        padding: 8px 10px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: rgba(255, 255, 255, .92);
+        font-size: 14px;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .nested-menu-container ul.nested-menu a:hover {
+        background: rgba(255, 255, 255, .10);
+    }
+}
+
+@media (max-width: 900px) {
+    .nested-menu-container li.menu-item-has-child > ul.nested-menu {
+        position: static;
+        width: 100%;
+        max-width: none;
+        padding: 6px;
+        margin-top: 6px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .06);
+        border: 1px solid rgba(255, 255, 255, .10);
+        display: none;
+    }
+
+    .nested-menu-container li.menu-item-has-child.is-nested-open > ul.nested-menu {
+        display: block;
+    }
+
+    .nested-menu-container ul.nested-menu a {
+        display: block;
+        padding: 10px 10px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: currentColor;
+    }
+
+    .nested-menu-container ul.nested-menu a:active {
+        background: rgba(255, 255, 255, .10);
+    }
+
+    .nested-menu-container .nested-menu-toggle {
+        padding: 10px;
+    }
+}
